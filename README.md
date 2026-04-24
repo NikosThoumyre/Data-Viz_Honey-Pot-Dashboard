@@ -9,7 +9,7 @@
 
 ## 📖 Contexte du Projet
 
-Ce projet s'inscrit dans le cadre du cours de **Data Visualization** de l'ESILV. Il a pour objectif d'explorer et d'analyser des données liées à la cybersécurité à travers la conception d'un tableau de bord (Dashboard) interactif. 
+Ce projet s'inscrit dans le cadre du cours de **Data Visualization**. Il a pour objectif d'explorer et d'analyser des données liées à la cybersécurité à travers la conception d'un tableau de bord interactif. 
 
 L'approche choisie se concentre sur l'optimisation du **Data-Ink Ratio** et l'application des principes de **Gestalt** (proximité, similarité des couleurs) pour fournir une interface claire, épurée et professionnelle (type SaaS).
 
