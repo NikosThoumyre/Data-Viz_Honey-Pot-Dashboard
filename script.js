@@ -82,7 +82,7 @@ function processData(geo, rawData) {
 }
 
 // ==========================================
-// 1. CARTE (Correction GeoJSON + Régions)
+// 1. CARTE
 // ==========================================
 const mapWidth = 1000, mapHeight = 600;
 
@@ -201,7 +201,7 @@ function showTooltipMap(event, d) {
 }
 
 // ==========================================
-// 2. TIMELINE (Aires empilées, Axe sans jour de semaine et Zoom par défaut retiré)
+// 2. TIMELINE 
 // ==========================================
 function drawTimeExplorer() {
     const margin = {top: 50, right: 20, bottom: 110, left: 60}, 
@@ -225,7 +225,7 @@ function drawTimeExplorer() {
     const y = d3.scaleLinear().domain([0, d3.max(timeData, d=>d.total)]).range([height, 0]);
     const y2 = d3.scaleLinear().domain(y.domain()).range([height2, 0]);
 
-    // RÈGLE SUR-MESURE POUR L'AXE DES DATES (ex: "14 avr.", ou "mai" si c'est le 1er du mois)
+    // RÈGLE SUR-MESURE POUR L'AXE DES DATES
     function customTickFormat(date) {
         return (d3.timeMonth(date) < date ? d3.timeFormat("%d %b") : d3.timeFormat("%B"))(date);
     }
@@ -310,7 +310,7 @@ function drawHeatmap() {
 }
 
 // ==========================================
-// 4. SANKEY DIAGRAM (Version 20 Pays - 20 Ports)
+// 4. SANKEY DIAGRAM
 // ==========================================
 function drawSankey() {
     const margin = {top: 30, right: 30, bottom: 30, left: 30},
@@ -364,7 +364,7 @@ function drawSankey() {
         return { source: parseInt(parts[0]), target: parseInt(parts[1]), value: value };
     });
 
-    // 2. Générateur Sankey (nodePadding réduit à 10 pour que 20 éléments rentrent joliment)
+    // 2. Générateur Sankey 
     const sankey = d3.sankey().nodeWidth(25).nodePadding(10).size([width, height]);
     const {nodes: sNodes, links: sLinks} = sankey({
         nodes: nodes.map(d => Object.assign({}, d)), links: links.map(d => Object.assign({}, d))
@@ -392,8 +392,7 @@ function drawSankey() {
             tooltip.style("opacity", 1).html(`<strong>${d.name}</strong><br/>Total trafic : ${d.value.toLocaleString()}`)
                    .style("left", (e.pageX + 15) + "px").style("top", (e.pageY - 30) + "px");
         }).on("mouseout", hideTooltip);
-
-    // 5. Textes (Taille réduite à 11px pour le Top 20)
+    
     node.append("text").attr("x", -8).attr("y", d => (d.y1 - d.y0) / 2).attr("dy", "0.35em")
         .attr("text-anchor", "end").text(d => d.name).style("font-size", "11px").style("font-weight", "600").style("fill", "#1e293b")
         .filter(d => d.x0 < width / 2).attr("x", 8 + sankey.nodeWidth()).attr("text-anchor", "start");
