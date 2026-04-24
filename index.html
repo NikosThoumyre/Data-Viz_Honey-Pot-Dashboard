@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cyber Intelligence Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Librairie D3 de base -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <!-- Plugin D3 Sankey (officiel) pour le diagramme de flux -->
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+</head>
+<body>
+
+  <!-- ÉCRAN DE CHARGEMENT -->
+  <div id="loader">
+      <div class="spinner"></div>
+      <h2>Analyse de la base de données brute...</h2>
+      <p>Veuillez patienter (cela peut prendre quelques secondes).</p>
+  </div>
+
+  <div id="home-page" class="page active">
+    <header class="home-header">
+      <div class="logo">🛡️ THREAT<span>INTEL</span></div>
+      <h1>Analyse Globale AWS Honeypot</h1>
+      <p>Exploration interactive des cyber-menaces mondiales (Projet D3.js).</p>
+    </header>
+
+    <div class="menu-grid">
+      <div class="menu-card" onclick="navigateTo('map-page')">
+        <div class="card-icon">🌍</div>
+        <h2>Cartographie & Profilage</h2>
+        <p>Découvrez les origines et le mode opératoire spécifique (hôtes, ports) de chaque pays.</p>
+        <span class="btn-explore">Explorer la carte &rarr;</span>
+      </div>
+
+      <div class="menu-card" onclick="navigateTo('time-page')">
+        <div class="card-icon">📈</div>
+        <h2>Analyse Temporelle</h2>
+        <p>Analyse des vagues d'attaques classées par protocoles (TCP, UDP, ICMP).</p>
+        <span class="btn-explore">Voir l'évolution &rarr;</span>
+      </div>
+
+      <div class="menu-card" onclick="navigateTo('tech-page')">
+        <div class="card-icon">🔥</div>
+        <h2>Matrice des Menaces</h2>
+        <p>Carte de chaleur (Heatmap) croisant les pays sources avec leurs ports de prédilection.</p>
+        <span class="btn-explore">Analyser la matrice &rarr;</span>
+      </div>
+
+      <!-- NOUVELLE CARTE MENU : SANKEY -->
+      <div class="menu-card" onclick="navigateTo('sankey-page')">
+        <div class="card-icon">🌊</div>
+        <h2>Flux d'Attaques</h2>
+        <p>Diagramme des flux : visualisez le cheminement depuis le Pays d'origine jusqu'au Port ciblé.</p>
+        <span class="btn-explore">Voir les flux &rarr;</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE CARTE -->
+  <div id="map-page" class="page">
+    <header class="page-header">
+      <button class="btn-back" onclick="navigateTo('home-page')">← Menu Principal</button>
+      <h2>Géographie des Menaces</h2>
+    </header>
+    <div class="chart-box full-width">
+        <p class="instruction">💡 Survolez les pays pour voir le nombre total d'attaques. Cliquez sur un pays pour obtenir plus d'informations et afficher les zones d'impact exactes. Pour dézoomer, cliquez sur l'océan.</p>
+        <div id="map-container"></div>
+    </div>
+  </div>
+
+  <!-- PAGE TEMPS -->
+  <div id="time-page" class="page">
+    <header class="page-header">
+      <button class="btn-back" onclick="navigateTo('home-page')">← Menu Principal</button>
+      <h2>Répartition par Protocoles (TCP / UDP / ICMP)</h2>
+    </header>
+    <div class="chart-box full-width">
+        <p class="instruction">💡 Survolez le graphique pour les détails précis du jour. Utilisez le mini-graphique en bas pour zoomer.</p>
+        <p class="instruction" style="border-left-color: #f59e0b; background: #fffbeb; font-size: 0.85rem; margin-top: -15px;">
+            ℹ️ Le dataset ne comporte des données qu'entre le 3 mars 2013 et le 8 septembre 2013.
+        </p>
+        <div id="line-focus-container" style="position: relative;"></div> 
+    </div>
+  </div>
+
+  <!-- PAGE MATRICE -->
+  <div id="tech-page" class="page">
+    <header class="page-header">
+      <button class="btn-back" onclick="navigateTo('home-page')">← Menu Principal</button>
+      <h2>Matrice : Top 10 Pays vs Top 15 Ports</h2>
+    </header>
+    <div class="chart-box full-width">
+        <p class="instruction">💡 La couleur indique l'intensité. Survolez une case pour voir le volume exact.</p>
+        <div id="heatmap-container" style="width: 100%;"></div>
+    </div>
+  </div>
+
+  <!-- PAGE SANKEY DIAGRAM -->
+  <div id="sankey-page" class="page">
+    <header class="page-header">
+      <button class="btn-back" onclick="navigateTo('home-page')">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin-right:5px; vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        Menu Principal
+      </button>
+      <h2>Flux d'Attaques Globaux</h2>
+    </header>
+    <div class="chart-box full-width">
+        <p class="instruction">💡 Survolez les flux pour observer leur volume. Ce graphique présente le <strong>Top 20 des pays</strong> et le <strong>Top 20 des ports</strong>.</p>
+        
+        <!-- NOUVELLE NOTE TECHNIQUE POUR L'ICMP -->
+        <p class="instruction" style="border-left-color: #f59e0b; background: #fffbeb; font-size: 0.85rem; margin-top: -15px;">
+            ℹ️ Le protocole <strong>ICMP</strong> n'apparaît pas dans ce flux. Comme c'est un protocole de contrôle, il n'utilise pas de ports de destination, contrairement à TCP et UDP. Il a donc été  exclu de ce croisement.
+        </p>
+
+        <div id="sankey-container"></div>
+    </div>
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>

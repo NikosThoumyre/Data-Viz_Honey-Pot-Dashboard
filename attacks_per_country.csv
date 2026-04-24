@@ -1,0 +1,177 @@
+cc,country,count
+CN,China,191394
+US,United States,89982
+JP,Japan,17204
+IR,Iran,13042
+TW,Taiwan,12148
+NL,Netherlands,10739
+IN,India,9418
+KR,South Korea,9316
+VN,Vietnam,7826
+RU,Russia,7211
+DE,Germany,6573
+BR,Brazil,6370
+CA,Canada,5983
+HK,Hong Kong,4481
+GB,United Kingdom,3951
+FR,France,3928
+RO,Romania,3073
+SE,Sweden,2964
+TR,Turkey,2299
+SG,Singapore,2202
+UA,Ukraine,2162
+TH,Thailand,1839
+IT,Italy,1793
+AU,Australia,1713
+VE,Venezuela,1603
+BG,Bulgaria,1567
+ID,Indonesia,1416
+AR,Argentina,1385
+PL,Poland,1309
+ES,Spain,1285
+IS,Iceland,1273
+HU,Hungary,1024
+IE,Ireland,930
+MY,Malaysia,913
+MM,Myanmar [Burma],872
+AT,Austria,794
+MX,Mexico,792
+PH,Philippines,709
+IL,Israel,647
+EG,Egypt,619
+SA,Saudi Arabia,589
+CZ,Czechia,587
+CO,Colombia,582
+PK,Pakistan,560
+AE,United Arab Emirates,534
+CH,Switzerland,527
+CL,Chile,504
+LT,Lithuania,458
+ZA,South Africa,438
+KZ,Kazakhstan,412
+RS,Serbia,361
+GR,Greece,359
+GE,Georgia,326
+LV,Latvia,325
+JO,Jordan,318
+BA,Bosnia and Herzegovina,300
+PT,Portugal,248
+AM,Armenia,244
+FI,Finland,240
+BE,Belgium,224
+BD,Bangladesh,213
+MK,Macedonia,191
+PE,Peru,176
+LU,Luxembourg,172
+KW,Kuwait,172
+BY,Belarus,171
+MA,Morocco,167
+MD,Moldova,165
+TN,Tunisia,151
+DK,Denmark,131
+HR,Croatia,125
+NZ,New Zealand,123
+NO,Norway,122
+PA,Panama,120
+SK,Slovakia,117
+LA,Laos,114
+AL,Albania,104
+NG,Nigeria,101
+EC,Ecuador,101
+UY,Uruguay,98
+EE,Estonia,86
+DZ,Algeria,80
+NI,Nicaragua,80
+CR,Costa Rica,80
+GT,Guatemala,79
+KE,Kenya,76
+ME,Montenegro,72
+SI,Slovenia,69
+AZ,Azerbaijan,69
+PR,Puerto Rico,68
+KH,Cambodia,66
+LK,Sri Lanka,62
+IM,Isle of Man,59
+MN,Mongolia,57
+MO,Macao,56
+HN,Honduras,55
+BO,Bolivia,55
+UG,Uganda,53
+DO,Dominican Republic,49
+IQ,Iraq,47
+PS,Palestine,46
+CY,Cyprus,43
+ZM,Zambia,42
+PY,Paraguay,38
+SD,Sudan,31
+AW,Aruba,28
+GH,Ghana,27
+BH,Bahrain,25
+TO,Tonga,24
+TZ,Tanzania,22
+VG,British Virgin Islands,22
+MT,Malta,22
+OM,Oman,22
+MG,Madagascar,22
+LY,Libya,21
+MU,Mauritius,21
+UZ,Uzbekistan,21
+SV,El Salvador,20
+KG,Kyrgyzstan,19
+LB,Lebanon,19
+ZW,Zimbabwe,18
+TT,Trinidad and Tobago,17
+BZ,Belize,16
+CI,Ivory Coast,16
+CM,Cameroon,16
+JM,Jamaica,16
+GP,Guadeloupe,15
+MZ,Mozambique,15
+KY,Cayman Islands,13
+SY,Syria,13
+TJ,Tajikistan,12
+CW,Curacao,12
+DJ,Djibouti,10
+GA,Gabon,10
+BS,Bahamas,9
+MV,Maldives,9
+XK,Kosovo,9
+SO,Somalia,8
+SN,Senegal,8
+NP,Nepal,8
+LC,Saint Lucia,8
+BT,Bhutan,7
+AO,Angola,7
+AF,Afghanistan,7
+BN,Brunei,6
+FJ,Fiji,6
+AG,Antigua and Barbuda,6
+MP,Northern Mariana Islands,5
+SR,Suriname,5
+HT,Haiti,4
+NC,New Caledonia,4
+VC,Saint Vincent and the Grenadines,4
+QA,Qatar,4
+ML,Mali,4
+GU,Guam,4
+LS,Lesotho,3
+GD,Grenada,3
+BW,Botswana,3
+WS,Samoa,3
+YE,Yemen,2
+BI,Burundi,2
+BF,Burkina Faso,2
+NE,Niger,2
+SM,San Marino,2
+ET,Ethiopia,2
+FM,Micronesia,2
+RW,Rwanda,2
+GQ,Equatorial Guinea,2
+GY,Guyana,2
+PW,Palau,2
+JE,Jersey,2
+LR,Liberia,2
+AD,Andorra,2
+CV,Cape Verde,1
+BM,Bermuda,1
+BB,Barbados,1

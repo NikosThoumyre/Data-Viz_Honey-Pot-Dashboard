@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-color: #f1f5f9; 
+  --primary: #096A5F;
+  --primary-hover: #064d45;
+  --secondary: #64748b;
+  --danger: #ef4444;
+  --card-bg: #ffffff;
+  --text-dark: #0f172a;
+  --border: #e2e8f0;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-dark); }
+
+/* LOADER */
+#loader {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color);
+    z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center;
+    transition: opacity 0.5s;
+}
+.spinner { width: 50px; height: 50px; border: 5px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* PAGES & NAVIGATION */
+.page { display: none; min-height: 100vh; padding: 2rem; animation: fadeIn 0.4s ease-out; }
+.page.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* =========================================
+   DESIGN DE LA PAGE D'ACCUEIL (HERO HEADER)
+   ========================================= */
+#home-page { padding: 0; }
+
+.home-header { 
+    background-color: var(--primary); 
+    color: white;
+    text-align: center; 
+    padding: 5rem 2rem 9rem 2rem; 
+    margin-bottom: -6rem; 
+}
+
+.logo { font-weight: 700; color: white; font-size: 1.5rem; margin-bottom: 1.5rem; letter-spacing: 1px;}
+.logo span { color: #5eead4; }
+
+.home-header h1 { font-size: 2.8rem; margin-bottom: 0.8rem; font-weight: 800; color: white;}
+.home-header p { color: #ccfbf1; font-size: 1.1rem; max-width: 600px; margin: 0 auto;}
+
+/* GRILLE À 4 CARTES */
+.menu-grid { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10;}
+
+.menu-card {
+  background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;
+  padding: 2.5rem 2rem; width: 340px; cursor: pointer; transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08); 
+  display: flex; flex-direction: column;
+}
+.menu-card:hover { transform: translateY(-8px); border-color: var(--primary); box-shadow: 0 20px 25px -5px rgba(9, 106, 95, 0.2); }
+.card-icon { font-size: 3.5rem; margin-bottom: 1rem; text-align: center;}
+.menu-card h2 { margin-bottom: 1rem; font-size: 1.3rem; text-align: center;}
+.menu-card p { color: var(--secondary); line-height: 1.5; flex-grow: 1; margin-bottom: 1.5rem; text-align: center;}
+.btn-explore { color: var(--primary); font-weight: 600; font-size: 1rem; text-align: center;}
+
+
+/* =========================================
+   DESIGN DES SOUS-PAGES (RAPPEL BICOLORE)
+   ========================================= */
+
+/* On ajoute un espace en haut et on prépare le fond */
+.page:not(#home-page) {
+    position: relative;
+    z-index: 1;
+    padding-top: 3rem;
+}
+
+/* Le fameux bandeau vert en arrière-plan */
+.page:not(#home-page)::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 320px; /* Le bandeau descend derrière le graphique */
+    background-color: var(--primary);
+    z-index: -1;
+}
+
+/* On passe les textes de l'en-tête en blanc */
+.page-header { display: flex; align-items: center; margin-bottom: 2rem; gap: 1.5rem; color: white; }
+.page-header h2 { font-size: 1.8rem; font-weight: 700; color: white;}
+
+/* Le bouton "Retour" adapté au fond vert foncé */
+.btn-back { 
+    display: inline-flex; align-items: center; gap: 0.5rem; 
+    background: rgba(255, 255, 255, 0.15); /* Légèrement translucide */
+    color: white; 
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    padding: 0.7rem 1.2rem; border-radius: 8px; cursor: pointer; 
+    font-weight: 600; font-size: 0.9rem; transition: 0.2s; 
+}
+.btn-back:hover { background: white; color: var(--primary); transform: translateX(-3px); }
+
+/* Renforcement de l'ombre pour faire ressortir le graphique blanc sur le fond vert */
+.chart-box { 
+    background: white; border-radius: 16px; padding: 2rem; 
+    border: 1px solid var(--border); 
+    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15); 
+}
+.full-width { max-width: 1200px; margin: 0 auto; }
+
+
+/* =========================================
+   ÉLÉMENTS SPÉCIFIQUES DES GRAPHIQUES
+   ========================================= */
+
+/* MAP & POPUP */
+#map-container { position: relative; width: 100%; height: 600px; overflow: hidden; background: #f8fafc; border-radius: 12px; border: 1px solid var(--border);}
+.country { cursor: pointer; transition: opacity 0.2s; }
+.country:hover { opacity: 0.7; }
+.map-controls { margin-top: 1rem; text-align: center; }
+.btn-reset { background: white; border: 1px solid var(--border); padding: 0.6rem 1.2rem; border-radius: 8px; cursor: pointer; font-weight: 500; transition: 0.2s; }
+.btn-reset:hover { background: var(--bg-color); border-color: var(--secondary);}
+
+.map-info-popup {
+    position: absolute; bottom: 20px; left: 20px; transform: none; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(4px); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-align: left; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; z-index: 10; min-width: 250px;
+}
+.map-info-popup.visible { opacity: 1; }
+.popup-stats { display: flex; justify-content: space-between; gap: 15px; margin-top: 15px; font-size: 0.85rem;}
+.popup-col h4 { font-size: 0.8rem; color: var(--secondary); margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;}
+.popup-col ul { list-style-type: none; padding: 0; margin: 0; }
+.popup-col li { margin-bottom: 4px; color: var(--text-dark); font-weight: 500;}
+
+.instruction { font-size: 0.95rem; color: var(--secondary); margin-bottom: 1.5rem; padding: 1rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid var(--primary); }
+
+/* HEATMAP */
+.cell { cursor: pointer; transition: stroke 0.1s, filter 0.1s; }
+.cell:hover { stroke: #1e293b; stroke-width: 2px; filter: brightness(0.9); }
+
+/* SANKEY */
+.sankey-link { transition: opacity 0.2s; cursor: pointer;}
+.sankey-link:hover { opacity: 0.8 !important; }
+
+/* TOOLTIP */
+.tooltip { 
+    position: absolute; background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; pointer-events: none; opacity: 0; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); transform: translate(0, -100%); margin-top: -10px; transition: opacity 0.1s; line-height: 1.4; border: 1px solid #334155;
+}
