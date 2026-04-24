@@ -48,7 +48,6 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .home-header h1 { font-size: 2.8rem; margin-bottom: 0.8rem; font-weight: 800; color: white;}
 .home-header p { color: #ccfbf1; font-size: 1.1rem; max-width: 600px; margin: 0 auto;}
 
-/* GRILLE À 4 CARTES */
 .menu-grid { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; max-width: 1600px; margin: 0 auto; position: relative; z-index: 10;}
 
 .menu-card {
@@ -65,31 +64,27 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 
 
 /* =========================================
-   DESIGN DES SOUS-PAGES (RAPPEL BICOLORE)
+   DESIGN DES SOUS-PAGES 
    ========================================= */
 
-/* On ajoute un espace en haut et on prépare le fond */
 .page:not(#home-page) {
     position: relative;
     z-index: 1;
     padding-top: 3rem;
 }
 
-/* Le fameux bandeau vert en arrière-plan */
 .page:not(#home-page)::before {
     content: "";
     position: absolute;
     top: 0; left: 0; right: 0;
-    height: 320px; /* Le bandeau descend derrière le graphique */
+    height: 320px; 
     background-color: var(--primary);
     z-index: -1;
 }
 
-/* On passe les textes de l'en-tête en blanc */
 .page-header { display: flex; align-items: center; margin-bottom: 2rem; gap: 1.5rem; color: white; }
 .page-header h2 { font-size: 1.8rem; font-weight: 700; color: white;}
 
-/* Le bouton "Retour" adapté au fond vert foncé */
 .btn-back { 
     display: inline-flex; align-items: center; gap: 0.5rem; 
     background: rgba(255, 255, 255, 0.15); /* Légèrement translucide */
@@ -100,7 +95,6 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 }
 .btn-back:hover { background: white; color: var(--primary); transform: translateX(-3px); }
 
-/* Renforcement de l'ombre pour faire ressortir le graphique blanc sur le fond vert */
 .chart-box { 
     background: white; border-radius: 16px; padding: 2rem; 
     border: 1px solid var(--border); 
