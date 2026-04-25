@@ -1,6 +1,5 @@
 const URL_GEOJSON =
   "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
-// const URL_RAW_DATA = "honeypot.csv";
 
 const tooltip = d3.select("#tooltip");
 

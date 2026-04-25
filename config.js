@@ -9,7 +9,7 @@ async function fetchAllData() {
   const { data, error } = await supabaseClient
     .from("cyber_security")
     .select("*")
-    .limit(30000)
+    .limit(20000)
     .order("datetime", { ascending: true });
 
   if (error) {
