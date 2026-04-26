@@ -1,8 +1,25 @@
+// ==========================================
+// 1. CONFIGURATION & VARIABLES GLOBALES
+// ==========================================
 const URL_GEOJSON =
   "https://raw.githubusercontent.com/holtzy/D3-graph-gallery/master/DATA/world.geojson";
-
 const tooltip = d3.select("#tooltip");
 
+// Dimensions de la carte
+const mapWidth = 1000;
+const mapHeight = 600;
+
+let countryDataMap,
+  timeData,
+  heatmapData = [],
+  topCountriesHeatmap = [],
+  topPortsHeatmap = [];
+
+let gMap, projection, path, svgMap, mapZoom;
+
+let sankeyGlobalData = [];
+
+// Configuration de la langue (Français)
 d3.timeFormatDefaultLocale({
   dateTime: "%A, le %e %B %Y, %X",
   date: "%d/%m/%Y",
@@ -48,14 +65,9 @@ d3.timeFormatDefaultLocale({
   ],
 });
 
-let countryDataMap,
-  timeData,
-  heatmapData = [],
-  topCountriesHeatmap = [],
-  topPortsHeatmap = [];
-let gMap, projection, path, svgMap, mapZoom;
-
-// --- NAVIGATION ---
+// ==========================================
+// 2. FONCTIONS DE NAVIGATION ET UTILITAIRES
+// ==========================================
 function navigateTo(pageId) {
   document
     .querySelectorAll(".page")
@@ -67,129 +79,6 @@ function navigateTo(pageId) {
   if (pageId === "sankey-page") drawSankey();
 }
 
-// --- CHARGEMENT ---
-Promise.all([d3.json(URL_GEOJSON), fetchAllData()]).then((results) => {
-  processData(results[0], results[1]);
-});
-
-function processData(geo, rawData) {
-  window.geoData = geo;
-  const formatDay = d3.timeFormat("%Y-%m-%d");
-
-  rawData.forEach((d) => {
-    const dateObj = new Date(d.datetime);
-    if (!isNaN(dateObj)) {
-      d.date = dateObj; //
-      d.dayString = formatDay(dateObj);
-    } else {
-      d.dayString = null;
-    }
-
-    d.proto = d.proto || "Inconnu";
-    d.longitude = d.longitude ? parseFloat(d.longitude) : null;
-    d.latitude = d.latitude ? parseFloat(d.latitude) : null;
-  });
-
-  const validData = rawData.filter((d) => d.dayString && d.country);
-  window.validData = validData;
-
-  // 1. CARTE
-  countryDataMap = d3.rollup(
-    validData,
-    (v) => ({
-      total: v.length,
-      protos: d3.rollup(
-        v,
-        (vv) => vv.length,
-        (d) => d.proto,
-      ),
-      hosts: d3.rollup(
-        v,
-        (vv) => vv.length,
-        (d) => d.host,
-      ),
-      ports: d3.rollup(
-        v,
-        (vv) => vv.length,
-        (d) => d.dpt,
-      ),
-    }),
-    (d) => getCSVCountryName(d.country),
-  ); // Correction avec le bon nom dès l'agrégation
-
-  // 2. TEMPOREL
-  const timeRollup = d3.rollup(
-    validData,
-    (v) => {
-      const protos = d3.rollup(
-        v,
-        (vv) => vv.length,
-        (d) => d.proto,
-      );
-      return {
-        date: d3.timeParse("%Y-%m-%d")(v[0].dayString),
-        total: v.length,
-        TCP: protos.get("TCP") || 0,
-        UDP: protos.get("UDP") || 0,
-        ICMP: protos.get("ICMP") || 0,
-      };
-    },
-    (d) => d.dayString,
-  );
-  timeData = Array.from(timeRollup.values()).sort((a, b) => a.date - b.date);
-
-  // 3. MATRICE
-  const countryTotals = d3.rollup(
-    validData,
-    (v) => v.length,
-    (d) => getCSVCountryName(d.country),
-  );
-  const portTotals = d3.rollup(
-    validData,
-    (v) => v.length,
-    (d) => d.dpt,
-  );
-  topCountriesHeatmap = Array.from(countryTotals)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 10)
-    .map((d) => d[0]);
-  topPortsHeatmap = Array.from(portTotals)
-    .filter((d) => d[0] !== "")
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 15)
-    .map((d) => d[0]);
-
-  const matrixRollup = d3.rollup(
-    validData,
-    (v) => v.length,
-    (d) => getCSVCountryName(d.country),
-    (d) => d.dpt,
-  );
-  topCountriesHeatmap.forEach((country) => {
-    topPortsHeatmap.forEach((port) => {
-      const portsForCountry = matrixRollup.get(country);
-      heatmapData.push({
-        country,
-        port,
-        value: portsForCountry ? portsForCountry.get(port) || 0 : 0,
-      });
-    });
-  });
-
-  d3.select("#loader").style("opacity", 0);
-  setTimeout(() => {
-    d3.select("#loader").style("display", "none");
-    document.getElementById("home-page").classList.add("active");
-    drawWorldMap();
-  }, 500);
-}
-
-// ==========================================
-// 1. CARTE
-// ==========================================
-const mapWidth = 1000,
-  mapHeight = 600;
-
 function getCSVCountryName(geoName) {
   const map = {
     USA: "United States",
@@ -197,36 +86,142 @@ function getCSVCountryName(geoName) {
     England: "United Kingdom",
     "Republic of Korea": "South Korea",
     "Democratic People's Republic of Korea": "North Korea",
-    Taiwan: "Taiwan",
     "Iran (Islamic Republic of)": "Iran",
     "Russian Federation": "Russia",
-    Myanmar: "Myanmar [Burma]",
-    "Côte d'Ivoire": "Ivory Coast",
-    "Czech Republic": "Czechia",
-    "Republic of Serbia": "Serbia",
-    "United Republic of Tanzania": "Tanzania",
-    "The Bahamas": "Bahamas",
-    "Syrian Arab Republic": "Syria",
-    "Venezuela (Bolivarian Republic of)": "Venezuela",
-    "Bolivia (Plurinational State of)": "Bolivia",
     "Viet Nam": "Vietnam",
-    "Republic of Moldova": "Moldova",
-    "Lao People's Democratic Republic": "Laos",
-    "Brunei Darussalam": "Brunei",
-    Macau: "Macao",
-    "Palestinian Territory": "Palestine",
-    "West Bank": "Palestine",
-    Gaza: "Palestine",
-    "Cabo Verde": "Cape Verde",
-    "Micronesia (Federated States of)": "Micronesia",
-    Macedonia: "Macedonia",
-    "North Macedonia": "Macedonia",
-    "Republic of Congo": "Congo",
-    "Democratic Republic of the Congo": "Congo",
-    Swaziland: "Eswatini",
   };
   return map[geoName] || geoName;
 }
+
+function hideTooltip() {
+  tooltip.style("opacity", 0);
+}
+
+// ==========================================
+// 3. LOGIQUE D'INITIALISATION (ASYNC/AWAIT)
+// ==========================================
+async function initDashboard() {
+  try {
+    console.log("Démarrage du chargement depuis Supabase...");
+
+    const [geo, map, time, heat, raw, sankey] = await Promise.all([
+      d3.json(URL_GEOJSON),
+      fetchMapData(),
+      fetchTimelineData(),
+      fetchHeatmapData(),
+      fetchRawData(),
+      fetchSankeyData(),
+    ]);
+
+    window.geoData = geo;
+    window.validData = raw.map((d) => ({
+      ...d,
+      longitude: parseFloat(d.longitude),
+      latitude: parseFloat(d.latitude),
+    }));
+
+    // 1. MAP
+    countryDataMap = new Map(
+      map.map((d) => [
+        getCSVCountryName(d.country),
+        { total: Number(d.total || d.total_attacks || d.count || 0) },
+      ]),
+    );
+
+    // 2. TIMELINE : Filtrage strict des dates invalides
+    const timeRollup = d3.rollup(
+      time.filter((d) => d.date || d.day), // On ignore les lignes sans date
+      (v) => {
+        let tcp = 0,
+          udp = 0,
+          icmp = 0,
+          total = 0;
+        v.forEach((d) => {
+          const val = Number(d.total || d.count || 0);
+          total += val;
+          const proto = (d.proto || "").toUpperCase();
+          if (proto === "TCP") tcp = val;
+          if (proto === "UDP") udp = val;
+          if (proto === "ICMP") icmp = val;
+        });
+
+        const rawDate = v[0].date || v[0].day;
+
+        return {
+          dateString: rawDate.split("T")[0],
+          total,
+          TCP: tcp,
+          UDP: udp,
+          ICMP: icmp,
+        };
+      },
+      (d) => (d.date || d.day).split("T")[0],
+    );
+
+    timeData = Array.from(timeRollup.values())
+      .map((d) => ({ ...d, date: new Date(d.dateString) }))
+      .filter((d) => !isNaN(d.date))
+      .sort((a, b) => a.date - b.date);
+
+    // 3. HEATMAP : Forcer le Top 10/15
+    const heatClean = heat.map((d) => ({
+      country: d.country,
+      port: String(d.port || d.dpt),
+      value: Number(d.volume || d.value || 0),
+    }));
+
+    // Calcul des vrais tops en JS
+    const countrySums = d3.rollup(
+      heatClean,
+      (v) => d3.sum(v, (d) => d.value),
+      (d) => d.country,
+    );
+    topCountriesHeatmap = Array.from(countrySums)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10)
+      .map((d) => d[0]);
+
+    const portSums = d3.rollup(
+      heatClean,
+      (v) => d3.sum(v, (d) => d.value),
+      (d) => d.port,
+    );
+    topPortsHeatmap = Array.from(portSums)
+      .filter((d) => d[0] !== "null" && d[0] !== "")
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 15)
+      .map((d) => d[0]);
+
+    heatmapData = heatClean.filter(
+      (d) =>
+        topCountriesHeatmap.includes(d.country) &&
+        topPortsHeatmap.includes(d.port),
+    );
+
+    // 4. SANKEY : Récupération des volumes globaux
+    sankeyGlobalData = sankey.map((d) => ({
+      country: d.country,
+      proto: d.proto,
+      port: String(d.port),
+      volume: Number(d.volume),
+    }));
+
+    console.log("Données synchronisées avec les vues SQL");
+
+    d3.select("#loader").style("opacity", 0);
+    setTimeout(() => {
+      d3.select("#loader").style("display", "none");
+      document.getElementById("home-page").classList.add("active");
+      drawWorldMap();
+    }, 500);
+  } catch (error) {
+    console.error("Erreur lors de l'initialisation :", error);
+  }
+}
+
+// ==========================================
+// 4. FONCTIONS DE DESSIN (WORLDMAP, TIMELINE, ETC.)
+// ==========================================
 
 function drawWorldMap() {
   const container = d3.select("#map-container").html("");
@@ -240,18 +235,18 @@ function drawWorldMap() {
     .attr("viewBox", `0 0 ${mapWidth} ${mapHeight}`)
     .style("width", "100%")
     .style("height", "100%");
+
   projection = d3
     .geoMercator()
     .scale(150)
     .translate([mapWidth / 2, mapHeight / 1.5]);
   path = d3.geoPath().projection(projection);
 
+  const maxTotal =
+    d3.max(Array.from(countryDataMap.values()), (d) => d.total) || 1;
   const colorScale = d3
     .scaleSequential(d3.interpolateReds)
-    .domain([
-      0,
-      Math.log(d3.max(Array.from(countryDataMap.values()), (d) => d.total) + 1),
-    ]);
+    .domain([0, Math.log(maxTotal + 1)]);
 
   svgMap
     .append("rect")
@@ -259,6 +254,7 @@ function drawWorldMap() {
     .attr("height", mapHeight)
     .style("fill", "transparent")
     .on("click", resetZoom);
+
   gMap = svgMap.append("g");
 
   gMap
@@ -269,9 +265,11 @@ function drawWorldMap() {
     .attr("class", "country")
     .attr("d", path)
     .attr("fill", (d) => {
-      const csvName = getCSVCountryName(d.properties.name);
-      const cData = countryDataMap.get(csvName);
-      return cData ? colorScale(Math.log(cData.total + 1)) : "#e2e8f0";
+      const name = getCSVCountryName(d.properties.name);
+      const data = countryDataMap.get(name);
+      return data && typeof data.total === "number"
+        ? colorScale(Math.log(data.total + 1))
+        : "#e2e8f0";
     })
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 0.5)
@@ -309,40 +307,57 @@ function zoomToCountry(event, d) {
     )
     .on("end", () => {
       drawLocales(csvName, zoomScale);
-      if (!cData)
+
+      if (!cData) {
         popup.html(
           `<h3>${d.properties.name}</h3><p>Aucune attaque enregistrée.</p>`,
         );
-      else {
+      } else {
+        // Extraction dynamique des sous-données depuis les données brutes (20k lignes)
+        const countryRaw = window.validData.filter(
+          (row) => getCSVCountryName(row.country) === csvName,
+        );
+
+        const protos = d3.rollup(
+          countryRaw,
+          (v) => v.length,
+          (row) => row.proto || "Inconnu",
+        );
+        const ports = d3.rollup(
+          countryRaw,
+          (v) => v.length,
+          (row) => row.dpt,
+        );
+        const hosts = d3.rollup(
+          countryRaw,
+          (v) => v.length,
+          (row) => row.host,
+        );
+
         const getTop3 = (mapObj) =>
           Array.from(mapObj)
-            .filter((a) => a[0] !== "")
+            .filter((a) => a[0] !== "" && a[0] !== undefined)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 3);
+
         popup.html(`
-                <h3 style="color:var(--primary); font-size:1.4rem;">${d.properties.name}</h3>
-                <p>Total Attaques : <strong>${cData.total.toLocaleString()}</strong></p>
-                <div class="popup-stats">
-                    <div class="popup-col"><h4>Protocoles</h4><ul>${getTop3(
-                      cData.protos,
-                    )
-                      .map(
-                        (p) =>
-                          `<li>${p[0]}: ${Math.round((p[1] / cData.total) * 100)}%</li>`,
-                      )
-                      .join("")}</ul></div>
-                    <div class="popup-col"><h4>Top Ports</h4><ul>${getTop3(
-                      cData.ports,
-                    )
-                      .map((p) => `<li>Port ${p[0]}</li>`)
-                      .join("")}</ul></div>
-                    <div class="popup-col"><h4>Top Cibles</h4><ul>${getTop3(
-                      cData.hosts,
-                    )
-                      .map((h) => `<li>${h[0]}</li>`)
-                      .join("")}</ul></div>
-                </div>
-            `);
+          <h3 style="color:var(--primary); font-size:1.4rem;">${d.properties.name}</h3>
+          <p>Total Attaques : <strong>${cData.total.toLocaleString()}</strong></p>
+          <div class="popup-stats">
+              <div class="popup-col"><h4>Protocoles</h4><ul>${getTop3(protos)
+                .map(
+                  (p) =>
+                    `<li>${p[0]}: ${Math.round((p[1] / countryRaw.length) * 100)}%</li>`,
+                )
+                .join("")}</ul></div>
+              <div class="popup-col"><h4>Top Ports</h4><ul>${getTop3(ports)
+                .map((p) => `<li>Port ${p[0]}</li>`)
+                .join("")}</ul></div>
+              <div class="popup-col"><h4>Top Cibles</h4><ul>${getTop3(hosts)
+                .map((h) => `<li>${h[0]}</li>`)
+                .join("")}</ul></div>
+          </div>
+        `);
       }
       popup.classed("visible", true);
     });
@@ -417,9 +432,8 @@ function drawLocales(countryName, transformK) {
 
 function showTooltipMap(event, d) {
   const csvName = getCSVCountryName(d.properties.name);
-  const count = countryDataMap.get(csvName)
-    ? countryDataMap.get(csvName).total
-    : 0;
+  const data = countryDataMap.get(csvName);
+  const count = data && data.total ? data.total : 0;
   tooltip
     .style("opacity", 1)
     .html(
@@ -696,33 +710,32 @@ function drawSankey() {
     .append("g")
     .attr("transform", `translate(${margin.left},${margin.top})`);
 
-  // 1. Agréger les données : TOP 20 Pays et TOP 20 Ports
+  // 1. Agréger les données : TOP 20 Pays et TOP 20 Ports (en additionnant les VOLUMES)
   const countryCounts = d3.rollup(
-    window.validData,
-    (v) => v.length,
+    sankeyGlobalData,
+    (v) => d3.sum(v, (d) => d.volume), // on somme les volumes SQL
     (d) => getCSVCountryName(d.country),
   );
   const topCountries = Array.from(countryCounts)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20)
-    .map((d) => d[0]); // 👈 Passage à 20 ici
+    .map((d) => d[0]);
 
   const portCounts = d3.rollup(
-    window.validData,
-    (v) => v.length,
-    (d) => d.dpt,
+    sankeyGlobalData,
+    (v) => d3.sum(v, (d) => d.volume), // on somme les volumes SQL
+    (d) => d.port,
   );
   const topPorts = Array.from(portCounts)
-    .filter((d) => d[0] !== "")
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20)
     .map((d) => d[0]);
 
-  // Filtrage
-  const sankeyData = window.validData.filter(
+  // Filtrage final pour les liens
+  const filteredSankeyData = sankeyGlobalData.filter(
     (d) =>
       topCountries.includes(getCSVCountryName(d.country)) &&
-      topPorts.includes(d.dpt),
+      topPorts.includes(d.port),
   );
 
   let nodesMap = new Map();
@@ -736,20 +749,21 @@ function drawSankey() {
   }
 
   // Création des liens
-  sankeyData.forEach((d) => {
+  filteredSankeyData.forEach((d) => {
     const cName = getCSVCountryName(d.country);
-    const proto = "Protocole : " + (d.proto || "Inconnu");
-    const port = "Port : " + d.dpt;
+    const proto = "Protocole : " + d.proto.toUpperCase();
+    const port = "Port : " + d.port;
 
     const cId = addNode(cName, "Country");
     const protoId = addNode(proto, "Protocol");
     const portId = addNode(port, "Port");
 
+    // on ajoute le volume de la vue SQL
     const link1 = cId + "-" + protoId;
-    linksMap.set(link1, (linksMap.get(link1) || 0) + 1);
+    linksMap.set(link1, (linksMap.get(link1) || 0) + d.volume);
 
     const link2 = protoId + "-" + portId;
-    linksMap.set(link2, (linksMap.get(link2) || 0) + 1);
+    linksMap.set(link2, (linksMap.get(link2) || 0) + d.volume);
   });
 
   const nodes = Array.from(nodesMap.values());
@@ -814,7 +828,7 @@ function drawSankey() {
   node
     .append("rect")
     .attr("height", (d) => Math.max(1, d.y1 - d.y0))
-    .attr("width", sankey.nodeWidth()) // Math.max(1, ...) évite les hauteurs nulles
+    .attr("width", sankey.nodeWidth())
     .attr("fill", (d) => colorScale(d.category))
     .attr("stroke", "#1e293b")
     .on("mouseover", function (e, d) {
@@ -857,3 +871,5 @@ document.addEventListener("mousemove", (event) => {
       .style("top", event.pageY - 20 + "px");
   }
 });
+
+initDashboard();

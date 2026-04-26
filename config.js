@@ -4,17 +4,33 @@ const SUPABASE_ANON_KEY =
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Fonction universelle pour récupérer les données
-async function fetchAllData() {
-  const { data, error } = await supabaseClient
+async function fetchMapData() {
+  const { data } = await supabaseClient.from("view_map_stats").select("*");
+  return data || [];
+}
+
+async function fetchTimelineData() {
+  const { data } = await supabaseClient.from("view_timeline_stats").select("*");
+  return data || [];
+}
+
+async function fetchHeatmapData() {
+  const { data } = await supabaseClient.from("view_heatmap_stats").select("*");
+  return data || [];
+}
+
+async function fetchSankeyData() {
+  const { data } = await supabaseClient
+    .from("view_sankey_stats")
+    .select("*")
+    .limit(50000);
+  return data || [];
+}
+
+async function fetchRawData() {
+  const { data } = await supabaseClient
     .from("cyber_security")
     .select("*")
-    .limit(20000)
-    .order("datetime", { ascending: true });
-
-  if (error) {
-    console.error("Erreur Supabase:", error);
-    return [];
-  }
-  return data;
+    .limit(150000);
+  return data || [];
 }
