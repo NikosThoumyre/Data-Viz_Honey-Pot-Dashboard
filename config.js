@@ -23,7 +23,15 @@ async function fetchSankeyData() {
   const { data } = await supabaseClient
     .from("view_sankey_stats")
     .select("*")
-    .limit(50000);
+    .limit(5000);
+  return data || [];
+}
+
+async function fetchLocalesData() {
+  const { data } = await supabaseClient
+    .from("view_locales_stats")
+    .select("*")
+    .limit(25000);
   return data || [];
 }
 
@@ -31,6 +39,6 @@ async function fetchRawData() {
   const { data } = await supabaseClient
     .from("cyber_security")
     .select("*")
-    .limit(150000);
+    .limit(10000);
   return data || [];
 }

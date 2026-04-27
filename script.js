@@ -17,6 +17,8 @@ let countryDataMap,
 
 let gMap, projection, path, svgMap, mapZoom;
 
+let localesGlobalData = [];
+
 let sankeyGlobalData = [];
 
 // Configuration de la langue (Français)
@@ -104,20 +106,21 @@ async function initDashboard() {
   try {
     console.log("Démarrage du chargement depuis Supabase...");
 
-    const [geo, map, time, heat, raw, sankey] = await Promise.all([
+    const [geo, map, time, heat, raw, sankey, locales] = await Promise.all([
       d3.json(URL_GEOJSON),
       fetchMapData(),
       fetchTimelineData(),
       fetchHeatmapData(),
       fetchRawData(),
       fetchSankeyData(),
+      fetchLocalesData(),
     ]);
 
     window.geoData = geo;
     window.validData = raw.map((d) => ({
       ...d,
-      longitude: parseFloat(d.longitude),
-      latitude: parseFloat(d.latitude),
+      longitude: d.longitude ? parseFloat(d.longitude) : null,
+      latitude: d.latitude ? parseFloat(d.latitude) : null,
     }));
 
     // 1. MAP
@@ -192,11 +195,22 @@ async function initDashboard() {
       .slice(0, 15)
       .map((d) => d[0]);
 
-    heatmapData = heatClean.filter(
-      (d) =>
-        topCountriesHeatmap.includes(d.country) &&
-        topPortsHeatmap.includes(d.port),
+    // Recréation de la grille (Croisement 10x15)
+    heatmapData = [];
+    const heatMapLookup = d3.rollup(
+      heatClean,
+      (v) => v[0].value,
+      (d) => d.country,
+      (d) => d.port,
     );
+
+    topCountriesHeatmap.forEach((country) => {
+      topPortsHeatmap.forEach((port) => {
+        const countryData = heatMapLookup.get(country);
+        const value = countryData ? countryData.get(port) || 0 : 0;
+        heatmapData.push({ country, port, value });
+      });
+    });
 
     // 4. SANKEY : Récupération des volumes globaux
     sankeyGlobalData = sankey.map((d) => ({
@@ -205,6 +219,8 @@ async function initDashboard() {
       port: String(d.port),
       volume: Number(d.volume),
     }));
+
+    localesGlobalData = locales;
 
     console.log("Données synchronisées avec les vues SQL");
 
@@ -324,7 +340,7 @@ function zoomToCountry(event, d) {
           (row) => row.proto || "Inconnu",
         );
         const ports = d3.rollup(
-          countryRaw,
+          countryRaw.filter((r) => r.dpt !== null && r.dpt !== "null"),
           (v) => v.length,
           (row) => row.dpt,
         );
@@ -371,23 +387,21 @@ function resetZoom() {
 
 function drawLocales(countryName, transformK) {
   gMap.selectAll(".locale-point").remove();
-  const localData = window.validData.filter(
-    (d) =>
-      getCSVCountryName(d.country) === countryName &&
-      d.longitude !== null &&
-      d.latitude !== null,
+
+  // On utilise directement les données agrégées de la vue SQL
+  const localData = localesGlobalData.filter(
+    (d) => getCSVCountryName(d.country) === countryName,
   );
+
   if (localData.length === 0) return;
 
-  const localeGroups = d3.rollup(
-    localData,
-    (v) => ({ count: v.length, locale: v[0].locale || "Région Inconnue" }),
-    (d) => d.longitude + "," + d.latitude,
-  );
-  const localePoints = Array.from(localeGroups, ([coords, data]) => {
-    const [lon, lat] = coords.split(",").map(Number);
-    return { lon, lat, count: data.count, locale: data.locale };
-  });
+  // Plus besoin de d3.rollup, la vue SQL a déjà fait le travail !
+  const localePoints = localData.map((d) => ({
+    lon: parseFloat(d.longitude),
+    lat: parseFloat(d.latitude),
+    count: Number(d.count),
+    locale: d.locale || "Région Inconnue",
+  }));
 
   const rScale = d3
     .scaleSqrt()
