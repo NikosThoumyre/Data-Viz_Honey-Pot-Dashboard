@@ -17,7 +17,11 @@ L'approche choisie se concentre sur l'optimisation du **Data-Ink Ratio** et l'ap
 
 Les données utilisées proviennent d'un **AWS Honeypot** (Pot de miel) déployé pour capturer des cyberattaques automatisées sur le cloud entre le **3 mars 2013 et le 8 septembre 2013**.  
 
-Le dataset brut (`honeypot.csv`) est parsé et agrégé à la volée côté client grâce à D3.js (`d3.rollup`, `d3.group`). Les variables (features) principalement exploitées sont :
+Afin d'optimiser les performances du tableau de bord et d'éviter la saturation du navigateur, le projet a été migré d'un fichier CSV statique vers une architecture de base de données **PostgreSQL hébergée sur Supabase**.
+* Les agrégations lourdes sont désormais déléguées au serveur via des **Vues SQL optimisées** (`view_map_stats`, `view_sankey_stats`, etc.).
+* La récupération des données s'effectue de manière **asynchrone** (`async/await`, `Promise.all`) via le SDK Supabase, garantissant un affichage fluide des visualisations D3.js.
+
+Les variables (features) principalement exploitées sont :
 * `datetime` : Horodatage de l'attaque (utilisé pour la chronologie).
 * `country` & `locale` : Pays et région d'origine de l'attaquant.
 * `latitude` & `longitude` : Coordonnées spatiales (utilisées pour les points d'impact locaux).
@@ -57,6 +61,7 @@ Le tableau de bord propose 4 visualisations distinctes et complémentaires, rép
 
 ## 🛠️ Stack Technique
 
+* **Base de données :** PostgreSQL (Supabase).
 * **HTML5 / CSS3** (Utilisation de CSS Grid et Flexbox, design bicolore "Hero Header").
 * **D3.js (v7.9.0)** : Manipulation du DOM, échelles, axes, transitions, parsing CSV et agrégations.
 * **D3-Sankey (v0.12.3)** : Module additionnel officiel pour le rendu du graphique de flux.
@@ -69,5 +74,5 @@ Le tableau de bord propose 4 visualisations distinctes et complémentaires, rép
 Si vous souhaitez faire tourner le projet en local :
 1. Clonez ce dépôt.
 2. Ouvrez le dossier dans VS Code.
-3. Lancez l'extension **Live Server** (indispensable pour contourner les restrictions CORS liées au chargement de `honeypot.csv` et `world.geojson`).
+3. Lancez l'extension **Live Server**.
 4. Rendez-vous sur `http://127.0.0.1:5500/index.html`.
