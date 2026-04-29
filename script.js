@@ -931,5 +931,23 @@ function exportChartPNG(containerId, filename) {
   image.src =
     "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgSource);
 }
+function exportContainerPNG(containerId, filename) {
+  const container = document.getElementById(containerId);
 
+  if (!container) {
+    alert("Conteneur introuvable.");
+    return;
+  }
+
+  html2canvas(container, {
+    backgroundColor: "#ffffff",
+    scale: 2,
+    useCORS: true,
+  }).then((canvas) => {
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  });
+}
 initDashboard();

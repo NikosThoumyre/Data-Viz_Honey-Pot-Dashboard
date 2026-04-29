@@ -88,7 +88,7 @@
         <div class="chart-actions">
           <button
             class="btn-export"
-            onclick="exportChartPNG('map-container', 'carte-menaces.png')"
+            onclick="exportContainerPNG('map-container', 'carte-menaces-detail.png')"
           >
             📸 Export PNG
           </button>
@@ -208,11 +208,11 @@
           destination, contrairement à TCP et UDP. Il a donc été exclu de ce
           croisement.
         </p>
-
+      
         <div class="chart-actions">
           <button
             class="btn-export"
-            onclick="exportChartPNG('sankey-container', 'flux-attaques.png')"
+            onclick="exportContainerPNG('map-container', 'carte-menaces-detail.png')"
           >
             📸 Export PNG
           </button>
@@ -225,6 +225,7 @@
     <div id="tooltip" class="tooltip"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <script src="config.js"></script>
     <script src="script.js"></script>
   </body>
