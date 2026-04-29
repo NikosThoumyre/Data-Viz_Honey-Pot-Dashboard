@@ -7,6 +7,14 @@ Visualisation interactive codée exclusivement en D3.js natif.*
 
 ---
 
+## 👥 Équipe du Projet
+* **Sydney TEXIER**
+* **Damien LEON**
+* **Theotime RICAUX**
+* **Nikos THOUMYRE**
+
+---
+
 ## 📖 Contexte du Projet
 
 Ce projet s'inscrit dans le cadre du cours de **Data Visualization**. Il a pour objectif d'explorer et d'analyser des données liées à la cybersécurité à travers la conception d'un tableau de bord interactif. 
