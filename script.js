@@ -296,8 +296,8 @@ function drawWorldMap() {
 
   countries
     .transition()
-    .duration(700)
-    .delay((d, i) => i * 2)
+    .duration(1500)
+    .delay((d, i) => i * 12)
     .attr("opacity", 1);
 
   mapZoom = d3
