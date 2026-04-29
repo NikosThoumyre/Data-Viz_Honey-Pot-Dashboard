@@ -165,3 +165,20 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .btn-export:active {
   transform: translateY(0);
 }
+
+.tooltip-title {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 6px;
+}
+
+.tooltip-row {
+  font-size: 0.85rem;
+  margin-bottom: 4px;
+}
+
+.tooltip-muted {
+  font-size: 0.75rem;
+  color: #cbd5e1;
+  margin-top: 6px;
+}
