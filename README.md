@@ -1,7 +1,7 @@
 # 🛡️ ThreatIntel - Analyse Globale AWS Honeypot
 
 **Projet de Visualisation de Données - ESILV (2026)**  
-Visualisation interactive codée exclusivement en D3.js natif.*
+Visualisation interactive codée exclusivement en D3.js natif.
 
 👉 **[Accéder au Dashboard Interactif (GitHub Pages)](https://nikosthoumyre.github.io/Data-Viz_Honey-Pot-Dashboard/)**
 
