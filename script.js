@@ -886,4 +886,40 @@ document.addEventListener("mousemove", (event) => {
   }
 });
 
+function exportChartPNG(containerId, filename) {
+  const container = document.getElementById(containerId);
+  const svg = container ? container.querySelector("svg") : null;
+
+  if (!svg) {
+    alert("Aucun graphique SVG trouvé à exporter.");
+    return;
+  }
+
+  const serializer = new XMLSerializer();
+  const svgSource = serializer.serializeToString(svg);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const svgRect = svg.getBoundingClientRect();
+  canvas.width = svgRect.width;
+  canvas.height = svgRect.height;
+
+  const image = new Image();
+
+  image.onload = function () {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  image.src =
+    "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgSource);
+}
+
 initDashboard();

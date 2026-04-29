@@ -138,3 +138,30 @@ body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); colo
 .tooltip { 
     position: absolute; background: rgba(15, 23, 42, 0.95); color: white; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; pointer-events: none; opacity: 0; z-index: 1000; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); transform: translate(0, -100%); margin-top: -10px; transition: opacity 0.1s; line-height: 1.4; border: 1px solid #334155;
 }
+.chart-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+
+.btn-export {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: 0.2s ease;
+}
+
+.btn-export:hover {
+  background: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(9, 106, 95, 0.25);
+}
+
+.btn-export:active {
+  transform: translateY(0);
+}
