@@ -84,6 +84,16 @@
           un pays pour obtenir plus d'informations et afficher les zones
           d'impact exactes. Pour dézoomer, cliquez sur l'océan.
         </p>
+
+        <div class="chart-actions">
+          <button
+            class="btn-export"
+            onclick="exportChartPNG('map-container', 'carte-menaces.png')"
+          >
+            📸 Export PNG
+          </button>
+        </div>
+
         <div id="map-container"></div>
       </div>
     </div>
@@ -113,6 +123,16 @@
           ℹ️ Le dataset ne comporte des données qu'entre le 3 mars 2013 et le 8
           septembre 2013.
         </p>
+
+        <div class="chart-actions">
+          <button
+            class="btn-export"
+            onclick="exportChartPNG('line-focus-container', 'timeline-protocoles.png')"
+          >
+            📸 Export PNG
+          </button>
+        </div>
+
         <div id="line-focus-container" style="position: relative"></div>
       </div>
     </div>
@@ -130,6 +150,16 @@
           💡 La couleur indique l'intensité. Survolez une case pour voir le
           volume exact.
         </p>
+
+        <div class="chart-actions">
+          <button
+            class="btn-export"
+            onclick="exportChartPNG('heatmap-container', 'matrice-menaces.png')"
+          >
+            📸 Export PNG
+          </button>
+        </div>
+
         <div id="heatmap-container" style="width: 100%"></div>
       </div>
     </div>
@@ -178,6 +208,15 @@
           destination, contrairement à TCP et UDP. Il a donc été exclu de ce
           croisement.
         </p>
+
+        <div class="chart-actions">
+          <button
+            class="btn-export"
+            onclick="exportChartPNG('sankey-container', 'flux-attaques.png')"
+          >
+            📸 Export PNG
+          </button>
+        </div>
 
         <div id="sankey-container"></div>
       </div>

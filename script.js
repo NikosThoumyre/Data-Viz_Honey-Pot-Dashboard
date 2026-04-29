@@ -300,7 +300,7 @@ function drawWorldMap() {
 
   gMap = svgMap.append("g");
 
-  gMap
+  const countries = gMap
     .selectAll("path")
     .data(window.geoData.features)
     .enter()
@@ -313,12 +313,19 @@ function drawWorldMap() {
       return data && typeof data.total === "number"
         ? colorScale(Math.log(data.total + 1))
         : "#e2e8f0";
-    })
+  })
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 0.5)
+    .attr("opacity", 0)
     .on("click", zoomToCountry)
     .on("mouseover", showTooltipMap)
     .on("mouseout", hideTooltip);
+
+  countries
+    .transition()
+    .duration(1500)
+    .delay((d, i) => i * 12)
+    .attr("opacity", 1);
 
   mapZoom = d3
     .zoom()
@@ -475,11 +482,14 @@ function showTooltipMap(event, d) {
   const csvName = getCSVCountryName(d.properties.name);
   const data = countryDataMap.get(csvName);
   const count = data && data.total ? data.total : 0;
+
   tooltip
     .style("opacity", 1)
-    .html(
-      `<strong>${d.properties.name}</strong><br/>Attaques : ${count.toLocaleString()}`,
-    )
+    .html(`
+      <div class="tooltip-title">🌍 ${d.properties.name}</div>
+      <div class="tooltip-row">Attaques : <strong>${count.toLocaleString()}</strong></div>
+      <div class="tooltip-muted">Cliquez pour voir les détails locaux</div>
+    `)
     .style("left", event.pageX + "px")
     .style("top", event.pageY - 20 + "px");
 }
@@ -912,5 +922,41 @@ document.addEventListener("mousemove", (event) => {
       .style("top", event.pageY - 20 + "px");
   }
 });
+
+function exportChartPNG(containerId, filename) {
+  const container = document.getElementById(containerId);
+  const svg = container ? container.querySelector("svg") : null;
+
+  if (!svg) {
+    alert("Aucun graphique SVG trouvé à exporter.");
+    return;
+  }
+
+  const serializer = new XMLSerializer();
+  const svgSource = serializer.serializeToString(svg);
+
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
+
+  const svgRect = svg.getBoundingClientRect();
+  canvas.width = svgRect.width;
+  canvas.height = svgRect.height;
+
+  const image = new Image();
+
+  image.onload = function () {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const link = document.createElement("a");
+    link.download = filename;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
+
+  image.src =
+    "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgSource);
+}
 
 initDashboard();
