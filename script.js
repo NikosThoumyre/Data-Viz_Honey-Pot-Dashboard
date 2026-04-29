@@ -102,11 +102,33 @@ function hideTooltip() {
 // ==========================================
 // 3. LOGIQUE D'INITIALISATION (ASYNC/AWAIT)
 // ==========================================
+
+function renderAnomalies(anomaliesData) {
+  const menuGrid = d3.select(".menu-grid");
+  d3.select("#insights-panel").remove();
+
+  const panel = menuGrid.insert("div", ":first-child")
+    .attr("id", "insights-panel")
+    .attr("class", "menu-card")
+    .style("border-color", "var(--danger)")
+    .style("background", "#fef2f2");
+
+  panel.append("div").attr("class", "card-icon").text("🚨");
+  panel.append("h2").style("color", "var(--danger)").text("Alerte: Ports Critiques");
+
+  const ul = panel.append("ul").style("text-align", "left").style("padding-left", "20px");
+
+  anomaliesData.forEach(d => {
+    ul.append("li")
+      .html(`Port <b>${d.port}</b> : <span style="color:var(--danger); font-weight:bold;">${d.total_attacks.toLocaleString()}</span> attaques.`);
+  });
+}
+
 async function initDashboard() {
   try {
     console.log("Démarrage du chargement depuis Supabase...");
 
-    const [geo, map, time, heat, raw, sankey, locales] = await Promise.all([
+    const [geo, map, time, heat, raw, sankey, locales, anomaliesData] = await Promise.all([
       d3.json(URL_GEOJSON),
       fetchMapData(),
       fetchTimelineData(),
@@ -114,6 +136,7 @@ async function initDashboard() {
       fetchRawData(),
       fetchSankeyData(),
       fetchLocalesData(),
+      fetchAnomaliesData() 
     ]);
 
     window.geoData = geo;
@@ -223,6 +246,10 @@ async function initDashboard() {
     localesGlobalData = locales;
 
     console.log("Données synchronisées avec les vues SQL");
+
+    if (anomaliesData && anomaliesData.length > 0) {
+      renderAnomalies(anomaliesData);
+    }
 
     d3.select("#loader").style("opacity", 0);
     setTimeout(() => {

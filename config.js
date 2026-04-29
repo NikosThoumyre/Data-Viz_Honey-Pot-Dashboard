@@ -42,3 +42,11 @@ async function fetchRawData() {
     .limit(10000);
   return data || [];
 }
+
+async function fetchAnomaliesData() {
+  const { data, error } = await supabaseClient
+    .from("view_anomalies")
+    .select("*");
+  if (error) console.error("Erreur Fetch Anomalies:", error);
+  return data || [];
+}
