@@ -75,7 +75,7 @@ function navigateTo(pageId) {
     .querySelectorAll(".page")
     .forEach((p) => p.classList.remove("active"));
   document.getElementById(pageId).classList.add("active");
-
+  if (pageId === "home-page" && svgMap) {resetZoom();}
   if (pageId === "time-page") drawTimeExplorer();
   if (pageId === "tech-page") drawHeatmap();
   if (pageId === "sankey-page") drawSankey();
@@ -316,16 +316,9 @@ function drawWorldMap() {
   })
     .attr("stroke", "#ffffff")
     .attr("stroke-width", 0.5)
-    .attr("opacity", 0)
     .on("click", zoomToCountry)
     .on("mouseover", showTooltipMap)
     .on("mouseout", hideTooltip);
-
-  countries
-    .transition()
-    .duration(1500)
-    .delay((d, i) => i * 12)
-    .attr("opacity", 1);
 
   mapZoom = d3
     .zoom()
